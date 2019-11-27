@@ -58,10 +58,10 @@ T parallel_accumulate(Iterator first,Iterator last,T init)
 int main()
 {
     std::vector<int> vi;
-    for(int i=0;i<10;++i)
+    for(int i=1;i<=100;++i)
     {
-        vi.push_back(10);
+        vi.push_back(i);
     }
-    int sum=parallel_accumulate(vi.begin(),vi.end(),5);
+    int sum=parallel_accumulate(vi.begin(),vi.end(),0);
     std::cout<<"sum="<<sum<<std::endl;
 }
