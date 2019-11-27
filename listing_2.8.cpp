@@ -17,28 +17,28 @@ struct accumulate_block
 template<typename Iterator,typename T>
 T parallel_accumulate(Iterator first,Iterator last,T init)
 {
-    unsigned long const length=std::distance(first,last);
+    auto const length=std::distance(first,last);
 
     if(!length)
         return init;
 
-    unsigned long const min_per_thread=25;
-    unsigned long const max_threads=
+    decltype(length) min_per_thread=25;
+    decltype(length) max_threads=
         (length+min_per_thread-1)/min_per_thread;
 
-    unsigned long const hardware_threads=
+    decltype(length) hardware_threads=
         std::thread::hardware_concurrency();
 
-    unsigned long const num_threads=
+    decltype(length) num_threads=
         std::min(hardware_threads!=0?hardware_threads:2,max_threads);
 
-    unsigned long const block_size=length/num_threads;
+    decltype(length) block_size=length/num_threads;
 
     std::vector<T> results(num_threads);
     std::vector<std::thread>  threads(num_threads-1);
 
     Iterator block_start=first;
-    for(unsigned long i=0;i<(num_threads-1);++i)
+    for (decltype(results.size()) i=0; i<(results.size()-1); ++i)
     {
         Iterator block_end=block_start;
         std::advance(block_end,block_size);
@@ -47,7 +47,7 @@ T parallel_accumulate(Iterator first,Iterator last,T init)
             block_start,block_end,std::ref(results[i]));
         block_start=block_end;
     }
-    accumulate_block<Iterator,T>()(block_start,last,results[num_threads-1]);
+    accumulate_block<Iterator,T>()(block_start,last,results[results.size()-1]);
     
     std::for_each(threads.begin(),threads.end(),
         std::mem_fn(&std::thread::join));
