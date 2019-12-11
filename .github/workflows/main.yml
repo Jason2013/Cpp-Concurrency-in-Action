@@ -1,0 +1,24 @@
+name: build
+on: push
+jobs:
+    build:
+        name: build sample code
+        runs-on: windows-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                platform:
+                    - x64
+                    - Win32
+                config:
+                    - Debug
+                    - Release
+        steps:
+            - uses: actions/checkout@v1
+            - name: CMake Build
+              run: |
+                mkdir build
+                cd build
+                cmake -A ${{ matrix.platform }} -G"Visual Studio 16 2019" ..
+                cmake --build . --config ${{ matrix.config }}
+              shell: cmd
